@@ -7,8 +7,7 @@ from tensorflow.keras.models import Sequential, model_from_json
 import subprocess
 
 
-y,sr = librosa.load('test.mp3',sr=22050)
-print(y)
+
 def cut_song(song):
   start = 0
   end = len(song)
