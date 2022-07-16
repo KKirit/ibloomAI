@@ -7,7 +7,8 @@ from tensorflow.keras.models import Sequential, model_from_json
 import subprocess
 
 
-
+y,sr = librosa.load('test.mp3',sr=22050)
+print(y)
 def cut_song(song):
   start = 0
   end = len(song)
@@ -53,10 +54,9 @@ def show_predict_page():
     if ok and file!=None:
         print(song_name)
         if song_name.type == 'audio/mpeg':
-          with open(os.path.join("tempDir","tempname.mp3"),"wb") as f:
+          with open(os.path.join("tempname.mp3"),"wb") as f:
             f.write(song_name.getbuffer())
-          subprocess.call(['ffmpeg', '-i', 'tempDir/tempname.mp3','tempDir/tempname.wav'])
-          song_name = 'tempDir/tempname.wav'
+          song_name = 'tempname.mp3'
         song_pieces = prepare_song(song_name)
         all_tracks = song_pieces
         genre = ([0]*len(song_pieces))
@@ -80,9 +80,9 @@ def show_predict_page():
 
         # salary = regressor.predict(X)
         st.subheader(f"The estimated class is : " + thisdict[str(classcase)])
-        for filename in os.listdir('tempDir'):
-          fook = os.path.join('tempDir', filename)
-          os.remove(fook)
+        # for filename in os.listdir('tempDir'):
+        #   fook = os.path.join('tempDir', filename)
+        #   os.remove(fook)
     elif file:
       st.subheader(f"FILE UPLOADED")
     elif ok and file==None:
