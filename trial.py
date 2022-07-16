@@ -1,12 +1,10 @@
-
-
 import streamlit as st
 import librosa
 import pandas as pd
 import numpy as np
 import os
 from tensorflow.keras.models import Sequential, model_from_json
-
+import subprocess
 
 
 
@@ -32,6 +30,7 @@ def prepare_song(song_path,label=0):
     list_matrices.append(melspect)
   return list_matrices
 
+thisdict = {"1" : "Normal", "2" : "Murmur", "3" : "Artifact"}
 json_file = open('model.json', 'r')
 loaded_model_json = json_file.read()
 json_file.close()
@@ -52,11 +51,16 @@ def show_predict_page():
 
     record = st.button("Record..")
     if ok and file!=None:
+        print(song_name)
+        if song_name.type == 'audio/mpeg':
+          with open(os.path.join("tempDir","tempname.mp3"),"wb") as f:
+            f.write(song_name.getbuffer())
+          subprocess.call(['ffmpeg', '-i', 'tempDir/tempname.mp3','tempDir/tempname.wav'])
+          song_name = 'tempDir/tempname.wav'
         song_pieces = prepare_song(song_name)
         all_tracks = song_pieces
         genre = ([0]*len(song_pieces))
 
-        print("actual val : " + str(genre[0]+1))
         pops = np.array(all_tracks)
         pops = pops.reshape(-1,128,98,1)
         predval = loaded_model.predict(pops)
@@ -72,12 +76,19 @@ def show_predict_page():
             if ff>=50 : 
                 classcase = i+1
             print("Class " + str(i+1) + " Probab = " + str(ff) + "%")
-            st.subheader("Class " + str(i+1) + " Probab = " + str(ff) + "%")
+            st.subheader("Class " + thisdict[str(i+1)] + " Probab = " + str(ff) + "%")
 
         # salary = regressor.predict(X)
-        st.subheader(f"The estimated class is {classcase}")
+        st.subheader(f"The estimated class is : " + thisdict[str(classcase)])
+        for filename in os.listdir('tempDir'):
+          fook = os.path.join('tempDir', filename)
+          os.remove(fook)
+    elif file:
+      st.subheader(f"FILE UPLOADED")
     elif ok and file==None:
       st.subheader(f"Please ADD FILE!!!")
+    else :
+      st.subheader("Upload file..")
   
       
 
