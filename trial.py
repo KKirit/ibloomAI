@@ -40,16 +40,16 @@ loaded_model.load_weights("model.h5")
 print("Loaded model from disk")
 
 def show_predict_page():
-    st.title("Heartbeat Prediction")
+    st.title("iBloom.Ai Heart Attack Prediction")
 
-    st.write("""### We need some information to predict the class""")
-    file = st.file_uploader("Please choose a file")
+    st.write("""### 24/7 AI Personal Cardiologist for everyone""")
+    file = st.file_uploader("Please choose a file",type=['wav'])
 
 
     song_name = file
     ok = st.button("Make Prediction")
 
-    record = st.button("Record..")
+    # record = st.button("Record..")
     if ok and file!=None:
         print(song_name)
         if song_name.type == 'audio/mpeg':
